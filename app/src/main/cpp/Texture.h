@@ -1,0 +1,8 @@
+//
+// Created by Maco on 5/26/2020.
+//
+
+#ifndef MYFIRSTNATIVE_TEXTURE_H
+#define MYFIRSTNATIVE_TEXTURE_H
+
+#endif //MYFIRSTNATIVE_TEXTURE_H

@@ -1,0 +1,2 @@
+rootProject.name='MyFirstNative'
+include ':app'
