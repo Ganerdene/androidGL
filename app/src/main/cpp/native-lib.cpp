@@ -24,7 +24,8 @@ GLuint modelViewLocation;
 GLuint textureCordLocation;
 GLuint textureId;
 
-float cx,cy;
+float cx = 0;
+float cy = 0;
 
 float projectionMatrix[16];
 float modelViewMatrix[16];
@@ -254,7 +255,8 @@ void renderFrame() {
     matrixIdentityFunction(modelViewMatrix);
     matrixRotateX(modelViewMatrix, angle);
     matrixRotateY(modelViewMatrix, angle);
-    matrixTranslate(modelViewMatrix, cx, cy, -20.0f);
+
+    matrixTranslate(modelViewMatrix, cx*4, cy*4, -20.0f);
 
     glUseProgram(simpleCube);
 
