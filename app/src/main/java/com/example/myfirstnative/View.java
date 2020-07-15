@@ -21,7 +21,9 @@
 package com.example.myfirstnative;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -39,14 +41,16 @@ class View extends GLSurfaceView {
     protected int stencilSize = 0;
     protected int[] value = new int[1];
 
+    public Context context;
+
     public View(Context context) {
         super(context);
-
+        this.context = context;
         setEGLContextFactory(new ContextFactory());
 
         setEGLConfigChooser(new ConfigChooser());
 
-        setRenderer(new Renderer());
+        setRenderer(new Renderer(getContext()));
     }
 
     private static class ContextFactory implements EGLContextFactory {
@@ -117,16 +121,27 @@ class View extends GLSurfaceView {
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {
+        private AssetManager mgr;
+        private Context context;
+
+        public Renderer(Context context) {
+            this.context = context;
+        }
+
+
         public void onDrawFrame(GL10 gl) {
             MainActivity.step();
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
+
             MainActivity.init(width, height);
+
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-
+            int res = MainActivity.loadTexture(context.getAssets(), "textures/objects.png");
+            Log.d("response", "onSurfaceChanged: " + res);
         }
     }
 }

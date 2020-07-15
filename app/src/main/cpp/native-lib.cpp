@@ -4,11 +4,15 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
+#include <android/asset_manager_jni.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
 
 #include <iostream>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include "Matrix.cpp"
 
@@ -24,6 +28,7 @@ GLuint modelViewLocation;
 GLuint textureCordLocation;
 GLuint textureId;
 
+AAssetManager *assetManager;
 float cx = 0;
 float cy = 0;
 
@@ -84,30 +89,30 @@ GLfloat colour[] = {1.0f, 0.0f, 0.0f,
 };
 
 
-GLfloat textureCords[] = { 1.0f, 1.0f, /* Back. */
-                           0.0f, 1.0f,
-                           1.0f, 0.0f,
-                           0.0f, 0.0f,
-                           0.0f, 1.0f, /* Front. */
-                           1.0f, 1.0f,
-                           0.0f, 0.0f,
-                           1.0f, 0.0f,
-                           0.0f, 1.0f, /* Left. */
-                           0.0f, 0.0f,
-                           1.0f, 0.0f,
-                           1.0f, 1.0f,
-                           1.0f, 1.0f, /* Right. */
-                           1.0f, 0.0f,
-                           0.0f, 0.0f,
-                           0.0f, 1.0f,
-                           0.0f, 1.0f, /* Top. */
-                           0.0f, 0.0f,
-                           1.0f, 0.0f,
-                           1.0f, 1.0f,
-                           0.0f, 0.0f, /* Bottom. */
-                           0.0f, 1.0f,
-                           1.0f, 1.0f,
-                           1.0f, 0.0f
+GLfloat textureCords[] = {1.0f, 1.0f, /* Back. */
+                          0.0f, 1.0f,
+                          1.0f, 0.0f,
+                          0.0f, 0.0f,
+                          0.0f, 1.0f, /* Front. */
+                          1.0f, 1.0f,
+                          0.0f, 0.0f,
+                          1.0f, 0.0f,
+                          0.0f, 1.0f, /* Left. */
+                          0.0f, 0.0f,
+                          1.0f, 0.0f,
+                          1.0f, 1.0f,
+                          1.0f, 1.0f, /* Right. */
+                          1.0f, 0.0f,
+                          0.0f, 0.0f,
+                          0.0f, 1.0f,
+                          0.0f, 1.0f, /* Top. */
+                          0.0f, 0.0f,
+                          1.0f, 0.0f,
+                          1.0f, 1.0f,
+                          0.0f, 0.0f, /* Bottom. */
+                          0.0f, 1.0f,
+                          1.0f, 1.0f,
+                          1.0f, 0.0f
 };
 
 GLushort indices[] = {0, 2, 3, 0, 1, 3, 4, 6, 7, 4, 5, 7, 8, 9, 10, 11, 8, 10, 12, 13, 14, 15, 12,
@@ -175,7 +180,7 @@ GLuint loadSimpleTexture() {
     glGenTextures(1, &textureId);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 3,3,0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 3, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     return textureId;
@@ -218,9 +223,48 @@ GLuint createProgram(const char *vertexSource, const char *fragmentSource) {
     return program;
 }
 
+GLuint loadImage(std::string path) {
+    GLuint texture;
+    if (assetManager != nullptr) {
+        AAsset *asset = AAssetManager_open(assetManager, path.c_str(), AASSET_MODE_UNKNOWN);
+        LOGI("assetManager is not null");
+
+        if (asset) {
+            auto size = AAsset_getLength(asset);
+            auto data = new unsigned char[size];
+            int32_t readSize = AAsset_read(asset, data, (size_t) size);
+            LOGI("asset__ size %d ", size);
+            if (readSize != size) {
+                delete[] data;
+
+                return 0;
+            }
+            stbi_set_flip_vertically_on_load(1);
+            int32_t  width, height, channel_count;
+            uint8_t* img_buf;
+            LOGI("asset__ img_buf before %d ", img_buf);
+            img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 0);
+            LOGI("asset__ img_buf after %d ", img_buf);
+            glGenTextures(1, &texture);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_buf);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        } else {
+            LOGI("asset null", "qweqwe");
+        }
+    } else {
+        LOGI("assetManager is null");
+    }
+    LOGI("assetManager texture %d", texture);
+    return texture;
+}
+
 bool setupGraphics(int w, int h) {
-    std::string stw =  std::to_string(w);
-    std::string sth =  std::to_string(h);
+    std::string stw = std::to_string(w);
+    std::string sth = std::to_string(h);
     stw = stw + " " + sth;
     simpleCube = createProgram(glVertexShader, glFragmentShader);
     if (!simpleCube) {
@@ -239,10 +283,11 @@ bool setupGraphics(int w, int h) {
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, w, h);
 
-    textureId = loadSimpleTexture();
-    if(textureId == 0){
+    textureId = loadImage("textures/net.png");
+
+    if (textureId == 0) {
         return false;
-    }else{
+    } else {
         return true;
     }
 }
@@ -256,7 +301,7 @@ void renderFrame() {
     matrixRotateX(modelViewMatrix, angle);
     matrixRotateY(modelViewMatrix, angle);
 
-    matrixTranslate(modelViewMatrix, cx*4, cy*4, -20.0f);
+    matrixTranslate(modelViewMatrix, cx * 4, cy * 4, -20.0f);
 
     glUseProgram(simpleCube);
 
@@ -286,7 +331,11 @@ extern "C" {
 JNIEXPORT void JNICALL
 Java_com_example_myfirstnative_MainActivity_init(JNIEnv *env, jobject obj, jint width, jint height);
 JNIEXPORT void JNICALL Java_com_example_myfirstnative_MainActivity_step(JNIEnv *env, jobject obj);
-JNIEXPORT void JNICALL Java_com_example_myfirstnative_MainActivity_touch(JNIEnv *env, jclass clazz, jfloat x, jfloat y);
+JNIEXPORT void JNICALL
+Java_com_example_myfirstnative_MainActivity_touch(JNIEnv *env, jclass clazz, jfloat x, jfloat y);
+JNIEXPORT jint JNICALL
+Java_com_example_myfirstnative_MainActivity_loadTexture(JNIEnv *env, jobject thiz,
+                                                        jobject asset_manager, jstring file_name);
 };
 
 /* [Native functions] */
@@ -306,4 +355,13 @@ Java_com_example_myfirstnative_MainActivity_touch(JNIEnv *env, jclass clazz, jfl
     // TODO: implement touch()
     cx = x;
     cy = y;
+}extern "C"
+JNIEXPORT jint JNICALL
+Java_com_example_myfirstnative_MainActivity_loadTexture(JNIEnv *env, jobject thiz,
+                                                        jobject asset_manager, jstring file_name) {
+    // TODO: implement loadTexture()
+
+    assetManager = AAssetManager_fromJava(env, asset_manager);
+
+    return 1;
 }

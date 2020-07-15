@@ -2,6 +2,7 @@ package com.example.myfirstnative;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 //        return false;
 //    }
     public static native void init(int width, int height);
+    public static native int loadTexture(AssetManager assetManager, String fileName);
     public static native void step();
     public static native void touch(float x, float y);
 }
