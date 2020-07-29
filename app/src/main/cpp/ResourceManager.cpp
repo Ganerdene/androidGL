@@ -35,21 +35,18 @@ Texture2D ResourceManager::LoadTextureFromFile(const char *file, bool alpha) {
                 return texture2D;
             }
 
-            stbi_set_flip_vertically_on_load(1);
+            stbi_set_flip_vertically_on_load(0);
             int32_t width, height, channel_count;
           //  uint8_t *img_buf;
             unsigned char *img_buf;
             LOGI("asset__ img_buf before %d ", img_buf);
-            img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 1);
+            img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 3);
             LOGI("asset__ img_buf after %d ", img_buf);
             texture2D.Height = height;
             texture2D.Width = width;
             texture2D.Image_Format = 1;
             texture2D.Internal_Format = 1;
-            LOGI("working asset size is %d height %d width %d", size, height, width);
-            LOGI("working texture generate hiihes umnu id %d", texture2D.ID);
             texture2D.Generate(width, height, img_buf);
-            LOGI("working texture generate hiisenii daraa id %d", texture2D.ID);
         }
     }
     return texture2D;
@@ -82,7 +79,7 @@ Shader ResourceManager::LoadShaderFromFile(const char *vShaderFile, const char *
 
     Shader shader;
     shader.Compile(vShaderCode, fShaderCode, gShaderFile != nullptr ? gShaderCode : nullptr);
-
+    LOGI("shader have error? %d", glGetError());
     return shader;
 }
 

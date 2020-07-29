@@ -25,10 +25,14 @@ void on_surface_created() {
 void on_surface_changed(int width, int height){
     LOGI("working on_surface_changed() ");
     glViewport(0,0,width,height);
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width),static_cast<float>(height), 0.0f, -1.0f, 1.0f);
+
+    ResourceManager::GetShader("sprite").Use().SetMatrix4("projection", projection);
+
     game.Width = width;
     game.Height = height;
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 }
 void on_update() {
     game.Render();
@@ -57,7 +61,11 @@ void Game::Init() {
     Renderer = new SpriteRenderer(shader);
     //Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
-    ResourceManager::LoadTexture("textures/firefox.png", true, "face");
+    ResourceManager::LoadTexture("textures/awesomeface2.png", true, "face");
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 }
 
 void Game::Update(float dt) {
