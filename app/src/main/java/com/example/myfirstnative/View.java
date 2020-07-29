@@ -135,13 +135,16 @@ class View extends GLSurfaceView {
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
 
-            MainActivity.init(width, height);
+            MainActivity.onSurfaceChanged(width, height);
 
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             int res = MainActivity.loadTexture(context.getAssets(), "textures/objects.png");
             Log.d("response", "onSurfaceChanged: " + res);
+
+            MainActivity.init(0,0);
+
         }
     }
 }

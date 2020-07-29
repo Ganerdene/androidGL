@@ -18,6 +18,16 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              native-lib.cpp
+            Game.cpp
+        Game.h
+        Shader.h
+        Shader.cpp
+        Texture.h
+        Texture.cpp
+        ResourceManager.cpp
+        ResourceManager.h
+        SpriteRenderer.cpp
+        SpriteRenderer.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a

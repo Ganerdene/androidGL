@@ -43,29 +43,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event)
-//    {
-//        float x = event.getX();
-//        float y = event.getY();
-//
-//        final float normalizedX = (event.getX() / (float) v.getWidth()) * 2 - 1;
-//        final float normalizedY = -((event.getY() / (float) v.getHeight()) * 2 - 1);
-//
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//                Log.d("x y: ", x+ " "+y);
-//                touch(x,y);
-//
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//            case MotionEvent.ACTION_UP:
-//        }
-//
-//        return false;
-//    }
     public static native void init(int width, int height);
+    public static native void onSurfaceChanged(int width, int height);
     public static native int loadTexture(AssetManager assetManager, String fileName);
     public static native void step();
     public static native void touch(float x, float y);
