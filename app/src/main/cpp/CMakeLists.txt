@@ -28,6 +28,10 @@ add_library( # Sets the name of the library.
         ResourceManager.h
         SpriteRenderer.cpp
         SpriteRenderer.h
+        GameObject.cpp
+        GameObject.h
+        GameLevel.cpp
+        GameLevel.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a

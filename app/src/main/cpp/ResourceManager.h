@@ -31,6 +31,8 @@ public:
     static Texture2D GetTexture(std::string name);
     // properly de-allocates all loaded resources
     static void      Clear();
+
+    static std::string Load_file(const GLchar *file_path);
 private:
     // private constructor, that is we do not want any actual resource manager objects. Its members and functions should be publicly available (static).
     ResourceManager() { }
@@ -39,7 +41,7 @@ private:
     // loads a single texture from file
     static Texture2D LoadTextureFromFile(const char *file, bool alpha);
 
-    static std::string Load_file(const GLchar *file_path);
+
 
     static AAssetManager *m_asset_manager;
 };
