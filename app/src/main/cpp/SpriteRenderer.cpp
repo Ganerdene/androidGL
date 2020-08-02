@@ -19,7 +19,7 @@ SpriteRenderer::~SpriteRenderer() {
 void
 SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec2 size, float rotate,glm::vec3 color) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+   // glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     this->shader.Use();
        glm::mat4 model{
             1.0f, 0.0f, 0.0f, 0.0f,

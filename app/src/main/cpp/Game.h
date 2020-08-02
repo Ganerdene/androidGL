@@ -11,6 +11,7 @@
 #include "glm/glm.hpp"
 #include <android/log.h>
 #include "stb_image.h"
+#include "GameLevel.h"
 
 void set_asset_manager(AAssetManager* asset_manager);
 void on_surface_created();
@@ -33,6 +34,9 @@ public:
     unsigned int Width, Height;
     Game(unsigned int width, unsigned int height);
 
+    std::vector<GameLevel> Levels;
+    unsigned int           Level;
+
     Game();
 
     ~Game();
@@ -42,6 +46,9 @@ public:
     void ProcessInput(float dt);
     void Update(float dt);
     void Render();
+
+    GLuint m_game_screen_top;
+    GLuint m_game_screen_low;
 };
 
 
