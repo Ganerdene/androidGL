@@ -24,21 +24,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(android.view.View v, MotionEvent event) {
                 if (event != null) {
-                    //https://stackoverflow.com/questions/52329303/from-pixel-coordinate-to-opengl-coordinate
-                    //2.0f * (x + 0.5f) / w - 1.0f;
-                    final float normalizedX = (float) (2 * (event.getX() + 0.5) / v.getWidth() - 1);
-                    final float normalizedY = -(float) (2 * (event.getY() + 0.5) / v.getHeight() - 1);
-
-                    if (event.getAction() == MotionEvent.ACTION_DOWN){
-                        Log.d("coordinate ", "x " + normalizedX + " Y " + normalizedY);
-                        Log.d("non_coordinate ", "x " + (event.getX() / (float) v.getWidth())+ " Y " + ((event.getY() / (float) v.getHeight())));
-                        touch(normalizedX, normalizedY);
-                    }
-
-                    return true;
-                } else {
-                    return false;
+                    final float x = event.getX();
+                    final float y = event.getY();
+                    final int idx = event.getActionIndex();
+                   if(event.getAction() == MotionEvent.ACTION_MOVE){
+                       graphicsView.queueEvent(new Runnable() {
+                           @Override
+                           public void run() {
+                               on_touch_press(x, y, idx);
+                           }
+                       });
+                   }
                 }
+                return true;
             }
         });
 
@@ -48,4 +46,5 @@ public class MainActivity extends AppCompatActivity {
     public static native int loadTexture(AssetManager assetManager, String fileName);
     public static native void step();
     public static native void touch(float x, float y);
+    public native void on_touch_press(float normalizedX, float normalizedY, int idx);
 }

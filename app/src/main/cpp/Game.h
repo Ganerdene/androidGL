@@ -17,6 +17,7 @@ void set_asset_manager(AAssetManager* asset_manager);
 void on_surface_created();
 void on_surface_changed(int width, int height);
 void on_update();
+void on_touch_press(float x, float y, int idx);
 
 enum GameState {
     GAME_ACTIVE,
@@ -27,6 +28,7 @@ enum GameState {
 class Game {
 public:
     void set_asset_manager(AAssetManager* asset_manager);
+    void on_touch_press(float x, float y, int idx);
     AAssetManager* m_asset_manager = nullptr;
     SpriteRenderer  *Renderer;
     GameState State;

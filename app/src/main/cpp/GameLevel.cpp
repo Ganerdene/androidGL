@@ -49,8 +49,8 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
     uint width = tileData[0].size();
 
     float unit_width = levelWidth / static_cast<float>(width);
-    float unit_height = levelHeight / height;
-    LOGI("toosgoni width %f height %f", unit_width, unit_height);
+    float unit_height = unit_width; //levelHeight / height;
+    LOGI("toosgoni width %f height %f sh %d ", unit_width, unit_height, screenHeight);
 //    Texture2D block = ResourceManager::GetTexture("block");
 //    float scale = unit_width / block.Width;
 //    unit_height = block.Height * scale;
@@ -60,7 +60,6 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
     for (uint y = 0; y < height; ++y) {
         for (uint x = 0; x < width; ++x) {
 
-            LOGI("12pos %d %d %f %f",x ,y, unit_width * x, unit_height * y);
             if (tileData[y][x] == 1) {
 
                 glm::vec2 pos(unit_width * x, unit_height * y);
@@ -82,8 +81,8 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
                 else if (tileData[y][x] == 5)
                     color = glm::vec3(1.0f, 0.5f, 0.0f);
 
-                sw = (uint)unit_width * x;
-                sh = (uint)unit_height * y;
+                sw = (uint) unit_width * x;
+                sh = (uint) unit_height * y;
                 glm::vec2 pos(sw, sh);
                 glm::vec2 size(unit_width, unit_height);
 
@@ -96,9 +95,8 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
 }
 
 void GameLevel::Draw(SpriteRenderer &renderer) {
-    for (GameObject &tile : this->Bricks){
+    for (GameObject &tile : this->Bricks) {
         tile.Draw(renderer);
-        LOGI("drawing bricks %f %f", tile.Position.x, tile.Position.y);
     }
 
 

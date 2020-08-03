@@ -52,4 +52,11 @@ JNIEXPORT void JNICALL
 Java_com_example_myfirstnative_MainActivity_onSurfaceChanged(JNIEnv *env, jclass clazz, jint width,
                                                              jint height) {
     on_surface_changed(width,height);
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_myfirstnative_MainActivity_on_1touch_1press(JNIEnv *env, jobject thiz,
+                                                             jfloat normalized_x,
+                                                             jfloat normalized_y, jint idx) {
+    on_touch_press(normalized_x, normalized_y, idx);
+    // TODO: implement on_touch_press()
 }
