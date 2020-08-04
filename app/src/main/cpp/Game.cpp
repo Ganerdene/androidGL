@@ -4,13 +4,13 @@
 
 #include "Game.h"
 #include "GameLevel.h"
-
+#include <chrono>
 #define LOG_TAG "libNative"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 SpriteRenderer  *Renderer;
-
+std::chrono::time_point <std::chrono::system_clock> last_frame;
 Game game;
 // Initial size of the player paddle
 const glm::vec2 PLAYER_SIZE(200.0f, 40.0f);
@@ -29,7 +29,7 @@ Game::Game() {
 void on_surface_created() {
     game.Init();
 }
-void on_touch_press(float x, float y, int idx) {
+void on_drag(float x, float y, int idx) {
     game.on_touch_press(x, y, idx);
 }
 void on_surface_changed(int width, int height){
@@ -61,6 +61,12 @@ void on_surface_changed(int width, int height){
 
 }
 void on_update() {
+    std::chrono::time_point <std::chrono::system_clock> current_frame = std::chrono::system_clock::now();
+    int delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+            current_frame - last_frame).count();
+    last_frame = current_frame;
+    float dt = (GLfloat) delta_time / 1000;
+    game.Update(dt);
     game.Render();
 }
 Game::~Game() {
@@ -88,7 +94,33 @@ void Game::Init() {
 }
 
 void Game::Update(float dt) {
+    if ((Player->Position.x + Player->Size.x / 2) != m_mouse_x) {
+        if (m_prev_mouse_x != m_mouse_x) {
+            m_diff_pos = m_mouse_x - (Player->Position.x + Player->Size.x / 2);
+            m_prev_mouse_x = m_mouse_x;
+            m_move_time = 0.05f;
+        }
 
+        if (m_move_time > 0) {
+            if (m_diff_pos > 0) {
+                if ((Player->Position.x + Player->Size.x / 2) < m_mouse_x) {
+                    GLfloat delta = (m_diff_pos * dt) / m_move_time;
+                    Player->Position.x += delta;
+                    m_diff_pos -= delta;
+                    m_move_time -= dt;
+                }
+            } else {
+                if ((Player->Position.x + Player->Size.x / 2) > m_mouse_x) {
+                    GLfloat delta = (m_diff_pos * dt) / m_move_time;
+                    Player->Position.x += delta;
+
+                    m_diff_pos -= delta;
+                    m_move_time -= dt;
+                }
+            }
+        }
+
+    }
 }
 
 void Game::ProcessInput(float dt) {
@@ -116,8 +148,8 @@ void Game::on_touch_press(float x, float y, int idx) {
     if (idx > 0)
         return;
 
-//    m_mouse_x = x;
-//    m_mouse_y = y;
+    m_mouse_x = x;
+    m_mouse_y = y;
 }
 
 void set_asset_manager(AAssetManager *asset_manager){

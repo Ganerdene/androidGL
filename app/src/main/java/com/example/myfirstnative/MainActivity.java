@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                        graphicsView.queueEvent(new Runnable() {
                            @Override
                            public void run() {
-                               on_touch_press(x, y, idx);
+                               on_drag(x, y, idx);
                            }
                        });
                    }
@@ -46,5 +46,5 @@ public class MainActivity extends AppCompatActivity {
     public static native int loadTexture(AssetManager assetManager, String fileName);
     public static native void step();
     public static native void touch(float x, float y);
-    public native void on_touch_press(float normalizedX, float normalizedY, int idx);
+    public native void on_drag(float normalizedX, float normalizedY, int idx);
 }

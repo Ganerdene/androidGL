@@ -17,7 +17,7 @@ void set_asset_manager(AAssetManager* asset_manager);
 void on_surface_created();
 void on_surface_changed(int width, int height);
 void on_update();
-void on_touch_press(float x, float y, int idx);
+void on_drag(float x, float y, int idx);
 
 enum GameState {
     GAME_ACTIVE,
@@ -51,6 +51,10 @@ public:
 
     GLuint m_game_screen_top;
     GLuint m_game_screen_low;
+
+    float m_mouse_x, m_prev_mouse_x, m_mouse_y;
+    float m_diff_pos;
+    float m_move_time;
 };
 
 
