@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "GameLevel.h"
+#include "BallObject.h"
 #include <chrono>
 #define LOG_TAG "libNative"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -17,7 +18,12 @@ const glm::vec2 PLAYER_SIZE(200.0f, 40.0f);
 // Initial velocity of the player paddle
 const float PLAYER_VELOCITY(500.0f);
 GameObject *Player;
+// Initial velocity of the Ball
+const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
+// Radius of the ball object
+const float BALL_RADIUS = 12.5f;
 
+BallObject     *Ball;
 
 Game::Game(unsigned int width, unsigned int height)
         : State(GAME_ACTIVE), Keys(), Width(width), Height(height) {
@@ -58,6 +64,8 @@ void on_surface_changed(int width, int height){
     );
 
     Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("paddle"));
+    glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS,-BALL_RADIUS * 2.0f);
+    Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY,ResourceManager::GetTexture("face"));
 
 }
 void on_update() {
@@ -91,9 +99,11 @@ void Game::Init() {
     LOGI("gameinit width %d height %d ", this->Width, this->Height);
 
 
+
 }
 
 void Game::Update(float dt) {
+    Ball->Move(dt, this->Width);
     if ((Player->Position.x + Player->Size.x / 2) != m_mouse_x) {
         if (m_prev_mouse_x != m_mouse_x) {
             m_diff_pos = m_mouse_x - (Player->Position.x + Player->Size.x / 2);
@@ -138,6 +148,8 @@ void Game::Render() {
     this->Levels[this->Level].Draw(*Renderer);
     // draw player
     Player->Draw(*Renderer);
+    // draw ball
+    Ball->Draw(*Renderer);
 }
 
 void Game::set_asset_manager(AAssetManager *asset_manager) {
@@ -147,6 +159,10 @@ void Game::set_asset_manager(AAssetManager *asset_manager) {
 void Game::on_touch_press(float x, float y, int idx) {
     if (idx > 0)
         return;
+    LOGI("darsan x %f y %f player pos x %f y %f",x,y,Player->Position.x, Player->Position.y);
+    if(x-110 <= Player->Position.x && x+110 >= Player->Position.x && y-110 <= Player->Position.y && y+110 >= Player->Position.y){
+        Ball->Stuck = false;
+    }
 
     m_mouse_x = x;
     m_mouse_y = y;
