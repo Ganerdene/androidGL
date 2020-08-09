@@ -35,6 +35,7 @@ public:
     bool Keys[1024];
     unsigned int Width, Height;
     Game(unsigned int width, unsigned int height);
+    void DoCollisions();
 
     std::vector<GameLevel> Levels;
     unsigned int           Level;

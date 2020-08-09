@@ -38,6 +38,25 @@ void on_surface_created() {
 void on_drag(float x, float y, int idx) {
     game.on_touch_press(x, y, idx);
 }
+bool CheckCollision(BallObject &one, GameObject &two){
+    // get center point circle first
+    glm::vec2 center(one.Position + one.Radius);
+    // calculate AABB info (center, half-extents)
+    glm::vec2 aabb_half_extentes(two.Size.x / 2.0f, two.Size.y / 2.0f);
+    glm::vec2 aabb_center(
+                two.Position.x + aabb_half_extentes.x,
+                two.Position.y + aabb_half_extentes.y
+            );
+    // get difference vector between both centers
+    glm::vec2 difference = center - aabb_center;
+    glm::vec2 clamped = glm::clamp(difference, -aabb_half_extentes, aabb_half_extentes);
+// add clamped value to AABB_center and we get the value of box closest to circle
+    glm::vec2 closest = aabb_center + clamped;
+    // retrieve vector between center circle and closest point AABB and check if length <= radius
+    difference = closest - center;
+    return glm::length(difference) < one.Radius;
+
+}
 void on_surface_changed(int width, int height){
     LOGI("working on_surface_changed() ");
     game.Width = width;
@@ -104,6 +123,7 @@ void Game::Init() {
 
 void Game::Update(float dt) {
     Ball->Move(dt, this->Width);
+    this->DoCollisions();
     if ((Player->Position.x + Player->Size.x / 2) != m_mouse_x) {
         if (m_prev_mouse_x != m_mouse_x) {
             m_diff_pos = m_mouse_x - (Player->Position.x + Player->Size.x / 2);
@@ -118,11 +138,19 @@ void Game::Update(float dt) {
                     Player->Position.x += delta;
                     m_diff_pos -= delta;
                     m_move_time -= dt;
+
+                    if(Ball->Stuck){
+                        Ball->Position.x += delta;
+                    }
                 }
             } else {
                 if ((Player->Position.x + Player->Size.x / 2) > m_mouse_x) {
                     GLfloat delta = (m_diff_pos * dt) / m_move_time;
                     Player->Position.x += delta;
+                    
+                    if(Ball->Stuck){
+                        Ball->Position.x += delta;
+                    }
 
                     m_diff_pos -= delta;
                     m_move_time -= dt;
@@ -166,6 +194,18 @@ void Game::on_touch_press(float x, float y, int idx) {
 
     m_mouse_x = x;
     m_mouse_y = y;
+}
+
+void Game::DoCollisions() {
+    for(GameObject &box : this->Levels[this->Level].Bricks){
+        if(!box.Destroyed){
+            if(CheckCollision(*Ball, box)){
+                if(!box.IsSolid){
+                    box.Destroyed = true;
+                }
+            }
+        }
+    }
 }
 
 void set_asset_manager(AAssetManager *asset_manager){

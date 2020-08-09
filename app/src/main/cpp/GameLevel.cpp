@@ -96,7 +96,9 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
 
 void GameLevel::Draw(SpriteRenderer &renderer) {
     for (GameObject &tile : this->Bricks) {
-        tile.Draw(renderer);
+        if(!tile.Destroyed){
+            tile.Draw(renderer);
+        }
     }
 
 
