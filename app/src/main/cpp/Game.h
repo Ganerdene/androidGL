@@ -49,6 +49,8 @@ public:
     void ProcessInput(float dt);
     void Update(float dt);
     void Render();
+    void ResetLevel();
+    void ResetPlayer();
 
     GLuint m_game_screen_top;
     GLuint m_game_screen_low;
