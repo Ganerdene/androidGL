@@ -29,7 +29,7 @@ GameObject *Player;
 // Initial velocity of the Ball
 const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 // Radius of the ball object
-const float BALL_RADIUS = 12.5f;
+const float BALL_RADIUS = 24.5f;
 
 BallObject     *Ball;
 
@@ -87,6 +87,17 @@ Collision CheckCollision(BallObject &one, GameObject &two){
     }else{
         return std::make_tuple(false, UP, glm::vec2(0.0f, 0.0f));
     }
+}
+bool CheckCollision(GameObject &one, GameObject &two) // AABB - AABB collision
+{
+    // collision x-axis?
+    bool collisionX = one.Position.x + one.Size.x >= two.Position.x &&
+                      two.Position.x + two.Size.x >= one.Position.x;
+    // collision y-axis?
+    bool collisionY = one.Position.y + one.Size.y >= two.Position.y &&
+                      two.Position.y + two.Size.y >= one.Position.y;
+    // collision only if on both axes
+    return collisionX && collisionY;
 }
 
 void on_surface_changed(int width, int height){

@@ -1,12 +1,13 @@
+
 attribute vec4 vertex;
 
 varying vec2 TexCoord;
 varying vec4 ParticleColor;
 
-
 uniform mat4 projection;
 uniform vec2 offset;
 uniform vec4 color;
+
 uniform float scale;
 
 void main()
