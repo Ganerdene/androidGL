@@ -34,6 +34,8 @@ add_library( # Sets the name of the library.
         GameLevel.h
         BallObject.cpp
         BallObject.h
+        ParticleGenerator.cpp
+        ParticleGenerator.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a

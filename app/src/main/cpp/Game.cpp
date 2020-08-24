@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "GameLevel.h"
 #include "BallObject.h"
+#include "ParticleGenerator.h"
 #include <chrono>
 #define LOG_TAG "libNative"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -32,6 +33,7 @@ const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 const float BALL_RADIUS = 24.5f;
 
 BallObject     *Ball;
+ParticleGenerator   *Particles;
 
 Game::Game(unsigned int width, unsigned int height)
         : State(GAME_ACTIVE), Keys(), Width(width), Height(height) {
@@ -128,7 +130,11 @@ void on_surface_changed(int width, int height){
     Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("paddle"));
     glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS,-BALL_RADIUS * 2.0f);
     Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY,ResourceManager::GetTexture("face"));
-
+    Particles = new ParticleGenerator(
+            ResourceManager::GetShader("particle"),
+            ResourceManager::GetTexture("particle"),
+            500
+    );
 }
 void on_update() {
     std::chrono::time_point <std::chrono::system_clock> current_frame = std::chrono::system_clock::now();
@@ -147,6 +153,7 @@ Game::~Game() {
 void Game::Init() {
     ResourceManager::set_asset_manager(m_asset_manager);
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
+    ResourceManager::LoadShader("shaders/particle.vs", "shaders/particle.fs", nullptr, "particle");
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width),static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
@@ -158,7 +165,8 @@ void Game::Init() {
     ResourceManager::LoadTexture("textures/block.png", false, "block");
     ResourceManager::LoadTexture("textures/block_solid.png", false, "block_solid");
     ResourceManager::LoadTexture("textures/paddle.png", true, "paddle");
-    LOGI("gameinit width %d height %d ", this->Width, this->Height);
+    ResourceManager::LoadTexture("textures/particle.png", true, "particle");
+
 
 
 
@@ -167,6 +175,9 @@ void Game::Init() {
 void Game::Update(float dt) {
     Ball->Move(dt, this->Width);
     this->DoCollisions();
+    //update particles
+    Particles->Update(dt, *Ball, 2, glm::vec2(Ball->Radius));
+
     if(Ball->Position.y >= this->Height){ // did ball reach bottom edge?
         this->ResetLevel();
         this->ResetPlayer();
@@ -223,6 +234,8 @@ void Game::Render() {
     this->Levels[this->Level].Draw(*Renderer);
     // draw player
     Player->Draw(*Renderer);
+    // draw particles
+    Particles->Draw();
     // draw ball
     Ball->Draw(*Renderer);
 }
@@ -234,7 +247,6 @@ void Game::set_asset_manager(AAssetManager *asset_manager) {
 void Game::on_touch_press(float x, float y, int idx) {
     if (idx > 0)
         return;
-    LOGI("darsan x %f y %f player pos x %f y %f",x,y,Player->Position.x, Player->Position.y);
     if(x-110 <= Player->Position.x && x+110 >= Player->Position.x && y-110 <= Player->Position.y && y+110 >= Player->Position.y){
         Ball->Stuck = false;
     }
