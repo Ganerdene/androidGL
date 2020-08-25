@@ -17,9 +17,9 @@ void ParticleGenerator::Update(float dt, GameObject &object, unsigned int newPar
         this->respawnParticle(this->particles[unusedParticle], object, offset);
     }
     // update all particles
-    for (unsigned int i = 0; i < newParticles; ++i) {
+    for (unsigned int i = 0; i < this->amount; ++i) {
         Particle &p = this->particles[i];
-        p.Life -= dt; // reduce life
+        p.Life -= dt * 6; // reduce life
         if (p.Life > 0.0f) {
             // partice is alive, thus update
             p.Position -= p.Velocity * dt;
@@ -37,7 +37,6 @@ void ParticleGenerator::Draw() {
         if (particle.Life > 0.0f) {
             this->shader.SetVector2f("offset", particle.Position);
             this->shader.SetVector4f("color", particle.Color);
-            this->shader.SetFloat("scale", 10.0f);
             this->texture.Bind();
             glBindVertexArray(this->VAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);

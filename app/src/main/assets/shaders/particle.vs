@@ -9,7 +9,7 @@ uniform vec2 offset;
 uniform vec4 color;
 
 void main(){
-    float scale = 10.0f;
+    float scale = 20.0f;
 	TexCoord = vertex.zw;
 	ParticleColor = color;
 

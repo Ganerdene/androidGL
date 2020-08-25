@@ -37,11 +37,13 @@ Texture2D ResourceManager::LoadTextureFromFile(const char *file, bool alpha) {
 
             stbi_set_flip_vertically_on_load(0);
             int32_t width, height, channel_count;
-          //  uint8_t *img_buf;
             unsigned char *img_buf;
-            LOGI("asset__ img_buf before %d ", img_buf);
-            img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 3);
-            LOGI("asset__ img_buf after %d ", img_buf);
+            if(alpha){
+                LOGI("texture size %d", size);
+                img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 3);
+            }else{
+                img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 3);
+            }
             texture2D.Height = height;
             texture2D.Width = width;
             texture2D.Image_Format = 1;
@@ -74,7 +76,8 @@ Shader ResourceManager::LoadShaderFromFile(const char *vShaderFile, const char *
     }
     const char *vShaderCode = vertexCode.c_str();
     const char *fShaderCode = fragmentCode.c_str();
-    LOGI("qweqwe before geometery shader");
+    LOGI("vertex_shader %s", vertexCode.c_str());
+    LOGI("fragment_shader %s", fragmentCode.c_str());
     const char *gShaderCode = geometryCode.c_str();
 
     Shader shader;
