@@ -18,7 +18,6 @@ void main()
 
 	//TexCoords = vertex.zw;
 
-
 	if(chaos){
 		float strenght = 0.3;
 		vec2 pos = vec2(texture.x, texture.y + 0.5 + cos(time) * strenght);

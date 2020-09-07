@@ -12,12 +12,18 @@
 #include <android/log.h>
 #include "stb_image.h"
 #include "GameLevel.h"
+#include "PowerUp.h"
+#include "BallObject.h"
 
 void set_asset_manager(AAssetManager* asset_manager);
+bool ShouldSpawn(unsigned int chance);
+bool IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type);
 void on_surface_created();
 void on_surface_changed(int width, int height);
 void on_update();
 void on_drag(float x, float y, int idx);
+void ActivatePowerUp(PowerUp &powerUp);
+bool CheckCollision(GameObject &one, GameObject &two);
 
 enum GameState {
     GAME_ACTIVE,
@@ -36,9 +42,11 @@ public:
     unsigned int Width, Height;
     Game(unsigned int width, unsigned int height);
     void DoCollisions();
-
+    std::vector<PowerUp> PowerUps;
     std::vector<GameLevel> Levels;
     unsigned int           Level;
+    void SpawnPowerUps(GameObject &block);
+    void UpdatePowerUps(float dt);
 
     Game();
 

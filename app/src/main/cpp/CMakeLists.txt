@@ -36,6 +36,10 @@ add_library( # Sets the name of the library.
         BallObject.h
         ParticleGenerator.cpp
         ParticleGenerator.h
+        PostProcessor.cpp
+        PostProcessor.h
+        PowerUp.cpp
+        PowerUp.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a
