@@ -171,6 +171,9 @@ Game::~Game() {
 
 void Game::Init() {
     ResourceManager::set_asset_manager(m_asset_manager);
+    oslSound = new OSLSound(m_asset_manager, false);
+    oslSound->setSound(true);
+    oslSound->play(OSLSound::BACKGROUND);
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     ResourceManager::LoadShader("shaders/particle.vs", "shaders/particle.fs", nullptr, "particle");
     ResourceManager::LoadShader("shaders/post_processor.vs", "shaders/post_processor.fs", nullptr,
@@ -300,8 +303,9 @@ void Game::Render() {
 
 }
 
-void Game::set_asset_manager(AAssetManager *asset_manager) {
+void Game::set_asset_manager(JNIEnv *env, AAssetManager *asset_manager) {
     m_asset_manager = asset_manager;
+    envv = env;
 }
 
 void Game::on_touch_press(float x, float y, int idx) {
@@ -324,9 +328,11 @@ void Game::DoCollisions() {
             if (std::get<0>(collision)) {
                 if (!box.IsSolid) {
                     this->SpawnPowerUps(box);
+                    oslSound->play(OSLSound::DESTROYED);
                     LOGI("box_position x %f y %f", box.Position.x, box.Position.y);
                     box.Destroyed = true;
                 } else {
+                    oslSound->play(OSLSound::SOLID);
                     ShakeTime = 0.05f;
                     Effects->Shake = true;
                 }
@@ -372,6 +378,7 @@ void Game::DoCollisions() {
                 ActivatePowerUp(powerUp);
                 powerUp.Destroyed = true;
                 powerUp.Activated = true;
+                oslSound->play(OSLSound::POWER_UP);
             }
         }
     }
@@ -412,39 +419,39 @@ void Game::ResetLevel() {
 }
 
 void Game::SpawnPowerUps(GameObject &block) {
-    if (true) {// 1 in 75 chance
+    if (ShouldSpawn(70)) {// 1 in 75 chance
         this->PowerUps.push_back(
                 PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 10.0f, block.Position, ResourceManager::GetTexture("powerup_speed"))
         );
         LOGI("powerup__speed", "speed");
     }
-    if(ShouldSpawn(90)){
+    if(ShouldSpawn(70)){
         this->PowerUps.push_back(
                 PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.Position, ResourceManager::GetTexture("powerup_sticky"))
         );
         LOGI("powerup__sticky", "sticky");
 
     }
-    if(ShouldSpawn(90)){
+    if(ShouldSpawn(70)){
         this->PowerUps.push_back(
                 PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.Position, ResourceManager::GetTexture("powerup_passthrough"))
         );
         LOGI("powerup__pass-through", "pass-through");
 
     }
-    if(ShouldSpawn(90)){
+    if(ShouldSpawn(70)){
         this->PowerUps.push_back(
                 PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4f), 10.0f, block.Position, ResourceManager::GetTexture("powerup_increase"))
         );
         LOGI("powerup__pad-size-increase", "pad-size-increase");
     }
-    if(ShouldSpawn(90)){
+    if(ShouldSpawn(10)){
         this->PowerUps.push_back(
                 PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.Position, ResourceManager::GetTexture("powerup_confuse"))
         );
         LOGI("powerup__confuse", "confuse");
     }
-    if(ShouldSpawn(90)){
+    if(ShouldSpawn(10)){
         this->PowerUps.push_back(
                 PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.Position, ResourceManager::GetTexture("powerup_chaos"))
         );
@@ -524,8 +531,8 @@ bool IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type){
     }
     return false;
 }
-void set_asset_manager(AAssetManager *asset_manager) {
-    game.set_asset_manager(asset_manager);
+void set_asset_manager(JNIEnv *env, AAssetManager *asset_manager) {
+    game.set_asset_manager(env,asset_manager);
 }
 
 bool ShouldSpawn(unsigned int chance) {

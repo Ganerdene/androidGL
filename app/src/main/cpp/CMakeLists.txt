@@ -40,6 +40,8 @@ add_library( # Sets the name of the library.
         PostProcessor.h
         PowerUp.cpp
         PowerUp.h
+        OSLSound.cpp
+        OSLSound.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -68,4 +70,5 @@ target_link_libraries( # Specifies the target library.
                             log
                         GLESv2
                         GLESv3
+                        OpenSLES
                        ${log-lib} )

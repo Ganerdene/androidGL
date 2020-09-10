@@ -14,8 +14,9 @@
 #include "GameLevel.h"
 #include "PowerUp.h"
 #include "BallObject.h"
+#include "OSLSound.h"
 
-void set_asset_manager(AAssetManager* asset_manager);
+void set_asset_manager(JNIEnv *env, AAssetManager* asset_manager);
 bool ShouldSpawn(unsigned int chance);
 bool IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type);
 void on_surface_created();
@@ -33,11 +34,13 @@ enum GameState {
 
 class Game {
 public:
-    void set_asset_manager(AAssetManager* asset_manager);
+    void set_asset_manager(JNIEnv *env, AAssetManager* asset_manager);
     void on_touch_press(float x, float y, int idx);
     AAssetManager* m_asset_manager = nullptr;
+    JNIEnv *envv = nullptr;
     SpriteRenderer  *Renderer;
     GameState State;
+    OSLSound * oslSound;
     bool Keys[1024];
     unsigned int Width, Height;
     Game(unsigned int width, unsigned int height);

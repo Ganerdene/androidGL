@@ -45,7 +45,7 @@ Java_com_example_myfirstnative_MainActivity_loadTexture(JNIEnv *env, jobject thi
 
     assetManager = AAssetManager_fromJava(env, asset_manager);
 
-    set_asset_manager(assetManager);
+    set_asset_manager(env,assetManager);
     return 1;
 }extern "C"
 JNIEXPORT void JNICALL
