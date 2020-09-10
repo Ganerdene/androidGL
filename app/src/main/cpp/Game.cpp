@@ -451,7 +451,9 @@ void Game::SpawnPowerUps(GameObject &block) {
         );
         LOGI("powerup__confuse", "confuse");
     }
-    if(ShouldSpawn(10)){
+    //todo check in future
+    // multisampled frame buffer doesnt work i dont know why so i set it 0
+    if(ShouldSpawn(0)){
         this->PowerUps.push_back(
                 PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.Position, ResourceManager::GetTexture("powerup_chaos"))
         );

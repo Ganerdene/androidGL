@@ -10,25 +10,23 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 PostProcessor::PostProcessor(Shader shader, unsigned int width, unsigned int height)
-        : PostProcessingShader(shader), Texture(), Width(width), Height(height), Confuse(false),
-          Chaos(false), Shake(false) {
+        : PostProcessingShader(shader), Texture(), Width(width), Height(height), Confuse(false), Chaos(false), Shake(false) {
     //initialize renderbuffer/framebuffer object
     glGenFramebuffers(1, &this->MSFBO);
     glGenFramebuffers(1, &this->FBO);
-    glGenFramebuffers(1, &this->RBO);
+    glGenRenderbuffers(1, &this->RBO);
     //initialize renderbuffer storage with a multisampled color buffer (don't need a depth/stencil buffer)
     glBindFramebuffer(GL_FRAMEBUFFER, this->MSFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, this->RBO);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGB, width,
-                                     height); //allocate storage for render buffer object
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                              this->RBO); //attach MS render buffer object to framebuffer
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGB, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, this->RBO);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        LOGE("ERROR::POSTPROCESSOR: Failed to initialize MSFBO");
+        LOGE("ERROR::POSTPROCESSOR: Failed to initialize MSFBO %c", glGetError());
+
     }
     // also initialize the FBO/texture to blit multisampled color-buffer to; used for shader
     glBindBuffer(GL_FRAMEBUFFER, this->FBO);
-    this->Texture.Generate(width, height, NULL);
+    this->Texture.Generate(width, height, nullptr);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->Texture.ID,
                            0); //attach texture to framebuffer as its color attachment
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {

@@ -25,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
     protected View graphicsView;
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         graphicsView = new View(getApplication());
