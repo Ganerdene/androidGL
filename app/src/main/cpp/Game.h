@@ -34,6 +34,7 @@ enum GameState {
 
 class Game {
 public:
+    unsigned int Lives;
     void set_asset_manager(JNIEnv *env, AAssetManager* asset_manager);
     void on_touch_press(float x, float y, int idx);
     AAssetManager* m_asset_manager = nullptr;

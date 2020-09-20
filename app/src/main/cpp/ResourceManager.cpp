@@ -21,7 +21,6 @@ std::map<std::string, Texture2D> ResourceManager::Textures;
 Texture2D ResourceManager::LoadTextureFromFile(const char *file, bool alpha) {
     Texture2D texture2D;
     if (m_asset_manager != nullptr) {
-        LOGI("working load texture m_asset_manager NOT NULL");
         AAsset *asset = AAssetManager_open(m_asset_manager, file, AASSET_MODE_UNKNOWN);
         if (asset) {
 
@@ -39,7 +38,6 @@ Texture2D ResourceManager::LoadTextureFromFile(const char *file, bool alpha) {
             int32_t width, height, channel_count;
             unsigned char *img_buf;
             if(alpha){
-                LOGI("texture size %d", size);
                 img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 3);
             }else{
                 img_buf = stbi_load_from_memory(data, size, &width, &height, &channel_count, 3);
@@ -126,4 +124,16 @@ std::string ResourceManager::Load_file(const GLchar *file_path) {
 
 void ResourceManager::set_asset_manager(AAssetManager *asset_manager) {
     m_asset_manager = asset_manager;
+}
+
+FileHandle ResourceManager::get_file_data(const GLchar *file_path) {
+    AAsset *assetFile = AAssetManager_open(m_asset_manager, file_path, AASSET_MODE_STREAMING);
+
+    FileHandle handle;
+    handle.m_size = AAsset_getLength(assetFile);
+    handle.m_buffer = new unsigned char[handle.m_size];
+    AAsset_read(assetFile, handle.m_buffer, (size_t) handle.m_size);
+    AAsset_close(assetFile);
+
+    return handle;
 }

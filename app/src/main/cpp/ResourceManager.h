@@ -12,6 +12,12 @@
 #include <android/asset_manager_jni.h>
 #include <GLES3/gl32.h>
 
+
+struct FileHandle{
+    unsigned char* m_buffer;
+    int32_t m_size;
+};
+
 class ResourceManager {
 public:
     // resource storage
@@ -33,6 +39,8 @@ public:
     static void      Clear();
 
     static std::string Load_file(const GLchar *file_path);
+
+    static FileHandle get_file_data(const GLchar *file_path);
 private:
     // private constructor, that is we do not want any actual resource manager objects. Its members and functions should be publicly available (static).
     ResourceManager() { }

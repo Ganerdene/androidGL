@@ -59,18 +59,19 @@ public class MainActivity extends AppCompatActivity {
                     final int idx = event.getActionIndex();
                     Log.d("getActionIndex", "" + idx);
                     if (action == MotionEvent.ACTION_DOWN) {
-                        Log.d("onTouch onDrag ", "" + true);
-                        onDrag = true;
-                    }
-                    if (action == MotionEvent.ACTION_MOVE) {
-
-
                         graphicsView.queueEvent(new Runnable() {
                             @Override
                             public void run() {
                                 on_drag(x, y, idx);
                             }
                         });
+                        Log.d("onTouch onDrag ", "" + true);
+                        onDrag = true;
+                    }
+                    if (action == MotionEvent.ACTION_MOVE) {
+
+
+
                     }
                     if(action == MotionEvent.ACTION_UP){
                         Log.d("onTouch onDrag ", "" + false);
