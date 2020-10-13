@@ -62,15 +62,22 @@ public class MainActivity extends AppCompatActivity {
                         graphicsView.queueEvent(new Runnable() {
                             @Override
                             public void run() {
-                                on_drag(x, y, idx);
+                                on_click(x, y, idx);
                             }
                         });
+
+
                         Log.d("onTouch onDrag ", "" + true);
                         onDrag = true;
                     }
                     if (action == MotionEvent.ACTION_MOVE) {
 
-
+                        graphicsView.queueEvent(new Runnable() {
+                            @Override
+                            public void run() {
+                                on_drag(x, y, idx);
+                            }
+                        });
 
                     }
                     if(action == MotionEvent.ACTION_UP){
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     public static native void touch(float x, float y);
 
     public native void on_drag(float normalizedX, float normalizedY, int idx);
+    public native void on_click(float normalizedX, float normalizedY, int idx);
 
 
 }

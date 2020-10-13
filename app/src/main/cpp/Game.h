@@ -23,6 +23,7 @@ void on_surface_created();
 void on_surface_changed(int width, int height);
 void on_update();
 void on_drag(float x, float y, int idx);
+void on_click(float x, float y, int idx);
 void ActivatePowerUp(PowerUp &powerUp);
 bool CheckCollision(GameObject &one, GameObject &two);
 
@@ -36,7 +37,8 @@ class Game {
 public:
     unsigned int Lives;
     void set_asset_manager(JNIEnv *env, AAssetManager* asset_manager);
-    void on_touch_press(float x, float y, int idx);
+    void on_drag(float x, float y, int idx);
+    void on_click(float x, float y, int idx);
     AAssetManager* m_asset_manager = nullptr;
     JNIEnv *envv = nullptr;
     SpriteRenderer  *Renderer;

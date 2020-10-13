@@ -59,4 +59,11 @@ Java_com_example_myfirstnative_MainActivity_on_1drag(JNIEnv *env, jobject thiz, 
                                                      jfloat normalized_y, jint idx) {
     // TODO: implement on_drag()
     on_drag(normalized_x, normalized_y, idx);
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_myfirstnative_MainActivity_on_1click(JNIEnv *env, jobject thiz,
+                                                      jfloat normalized_x, jfloat normalized_y,
+                                                      jint idx) {
+    on_click(normalized_x, normalized_y, idx);
+    // TODO: implement on_click()
 }

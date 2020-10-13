@@ -60,7 +60,11 @@ void on_surface_created() {
 }
 
 void on_drag(float x, float y, int idx) {
-    game.on_touch_press(x, y, idx);
+    game.on_drag(x, y, idx);
+}
+
+void on_click(float x, float y, int idx) {
+    game.on_click(x, y, idx);
 }
 
 Direction VectorDirection(glm::vec2 target) {
@@ -145,7 +149,7 @@ void on_surface_changed(int width, int height) {
 
     glm::vec2 playerPos = glm::vec2(
             game.Width / 2.0f - PLAYER_SIZE.x / 2.0f,
-            game.Height - PLAYER_SIZE.y
+            game.Height - PLAYER_SIZE.y - 280
     );
 
     Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("paddle"));
@@ -346,51 +350,10 @@ void Game::set_asset_manager(JNIEnv *env, AAssetManager *asset_manager) {
     envv = env;
 }
 
-void Game::on_touch_press(float x, float y, int idx) {
+void Game::on_drag(float x, float y, int idx) {
+
     if (idx > 0)
         return;
-    if(this->State == GAME_MENU){
-        if (x - 110 <= Player->Position.x && x + 110 >= Player->Position.x &&
-            y - 110 <= Player->Position.y && y + 110 >= Player->Position.y) {
-            this->State = GAME_ACTIVE;
-            Ball->Stuck = false;
-        }
-        if (x - 120 <= 1080.0f / 2 && x + 120 >= 1080.0f / 2 &&
-            y - 120 <= 1920.0f / 2 && y + 120 >= 1920.0f / 2) {
-            this->State = GAME_ACTIVE;
-            Ball->Stuck = false;
-
-        }
-        if (x > 0 && x < 401 && y > 300 && y < 1601) {
-            if (this->State == GAME_MENU) {
-                LOGI("left side taped x %f y %f", x, y);
-                this->Level = (this->Level + 1) % 3;
-            }
-        }
-        if (x > 1080.0f - 400 && x < 1080.0f && y > 300 && y < 1601) {
-            if (this->State == GAME_MENU) {
-                LOGI("right side taped x %f y %f", x, y);
-                if (this->Level > 0)
-                    --this->Level;
-                else
-                    this->Level = 2;
-            }
-        }
-    }
-    if (this->State == GAME_WIN) {
-        if (x - 120 <= 1080.0f / 2 && x + 120 >= 1080.0f / 2 &&
-            y - 120 <= 1920.0f / 2 && y + 120 >= 1920.0f / 2) {
-            this->State = GAME_MENU;
-        }
-    }
-    if(this->State == GAME_ACTIVE){
-        if (x - 110 <= Player->Position.x && x + 110 >= Player->Position.x &&
-            y - 110 <= Player->Position.y && y + 110 >= Player->Position.y) {
-            this->State = GAME_ACTIVE;
-            Ball->Stuck = false;
-        }
-    }
-
 
 
     //LOGI("taped x %f  y %f", x,y);
@@ -484,7 +447,7 @@ void Game::ResetPlayer() {
 
     Player->Size = PLAYER_SIZE;
     Player->Position = glm::vec2(this->Width / 2.0f - PLAYER_SIZE.x / 2.0f,
-                                 this->Height - PLAYER_SIZE.y);
+                                 this->Height - PLAYER_SIZE.y - 280);
     Ball->Reset(
             Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -(BALL_RADIUS * 2.0f)),
             INITIAL_BALL_VELOCITY);
@@ -618,6 +581,53 @@ void Game::UpdatePowerUps(float dt) {
                                         [](const PowerUp &powerUp) {
                                             return powerUp.Destroyed && !powerUp.Activated;
                                         }), this->PowerUps.end());
+}
+
+void Game::on_click(float x, float y, int idx) {
+    if (idx > 0)
+        return;
+    LOGI("on_click_click x %f y %f", x, y);
+    if (this->State == GAME_MENU) {
+        if (x - 110 <= Player->Position.x && x + 110 >= Player->Position.x &&
+            y - 110 <= Player->Position.y && y + 110 >= Player->Position.y) {
+            this->State = GAME_ACTIVE;
+            Ball->Stuck = false;
+        }
+        if (x - 120 <= 1080.0f / 2 && x + 120 >= 1080.0f / 2 &&
+            y - 120 <= 1920.0f / 2 && y + 120 >= 1920.0f / 2) {
+            this->State = GAME_ACTIVE;
+            Ball->Stuck = false;
+
+        }
+        if (x > 0 && x < 401 && y > 300 && y < 1601) {
+            if (this->State == GAME_MENU) {
+                LOGI("left side taped x %f y %f", x, y);
+                this->Level = (this->Level + 1) % 3;
+            }
+        }
+        if (x > 1080.0f - 400 && x < 1080.0f && y > 300 && y < 1601) {
+            if (this->State == GAME_MENU) {
+                LOGI("right side taped x %f y %f", x, y);
+                if (this->Level > 0)
+                    --this->Level;
+                else
+                    this->Level = 2;
+            }
+        }
+    }
+    if (this->State == GAME_WIN) {
+        if (x - 120 <= 1080.0f / 2 && x + 120 >= 1080.0f / 2 &&
+            y - 120 <= 1920.0f / 2 && y + 120 >= 1920.0f / 2) {
+            this->State = GAME_MENU;
+        }
+    }
+    if (this->State == GAME_ACTIVE) {
+        if (x - 110 <= Player->Position.x && x + 110 >= Player->Position.x &&
+            y - 110 <= Player->Position.y && y + 110 >= Player->Position.y) {
+            this->State = GAME_ACTIVE;
+            Ball->Stuck = false;
+        }
+    }
 }
 
 bool IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type) {
